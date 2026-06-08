@@ -1,0 +1,52 @@
+<?php
+
+return [
+    'accepted' => 'Необходимо принять :attribute.',
+    'active_url' => 'Поле :attribute содержит недействительный URL.',
+    'after' => 'Поле :attribute должно содержать дату после :date.',
+    'after_or_equal' => 'Поле :attribute должно содержать дату не раньше :date.',
+    'before' => 'Поле :attribute должно содержать дату до :date.',
+    'before_or_equal' => 'Поле :attribute должно содержать дату не позже :date.',
+    'confirmed' => 'Поле :attribute не совпадает с подтверждением.',
+    'current_password' => 'Неверный пароль.',
+    'date' => 'Поле :attribute не является корректной датой.',
+    'email' => 'Поле :attribute должно быть действительным электронным адресом.',
+    'exists' => 'Выбранное значение для :attribute некорректно.',
+    'image' => 'Файл :attribute должен быть изображением.',
+    'in' => 'Выбранное значение для :attribute некорректно.',
+    'max' => [
+        'numeric' => 'Поле :attribute не может быть больше :max.',
+        'file' => 'Файл :attribute не может быть больше :max КБ.',
+        'string' => 'Поле :attribute не может быть длиннее :max символов.',
+    ],
+    'min' => [
+        'numeric' => 'Поле :attribute должно быть не меньше :min.',
+        'file' => 'Файл :attribute должен быть не меньше :min КБ.',
+        'string' => 'Поле :attribute должно содержать не менее :min символов.',
+    ],
+    'numeric' => 'Поле :attribute должно быть числом.',
+    'required' => 'Поле :attribute обязательно для заполнения.',
+    'string' => 'Поле :attribute должно быть строкой.',
+    'unique' => 'Такое значение поля :attribute уже занято.',
+    'url' => 'Поле :attribute содержит некорректный URL.',
+    'size' => [
+        'string' => 'Поле :attribute должно содержать :size символов.',
+        'numeric' => 'Поле :attribute должно быть равно :size.',
+    ],
+
+    'attributes' => [
+        'name' => 'имя',
+        'email' => 'электронная почта',
+        'password' => 'пароль',
+        'password_confirmation' => 'подтверждение пароля',
+        'current_password' => 'текущий пароль',
+        'message' => 'сообщение',
+        'subject' => 'тема',
+        'code' => 'код',
+        'amount' => 'сумма',
+        'title' => 'заголовок',
+        'body' => 'текст',
+        'price' => 'цена',
+        'terms' => 'условия',
+    ],
+];

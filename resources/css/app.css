@@ -1,0 +1,197 @@
+@import 'tailwindcss';
+
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+/* Dark mode driven by a `.dark` class on <html> (toggled by Alpine theme store) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+    --font-display: 'Sora', 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+    /* Brand — indigo→violet */
+    --color-brand-50: #eef2ff;
+    --color-brand-100: #e0e7ff;
+    --color-brand-200: #c7d2fe;
+    --color-brand-300: #a5b4fc;
+    --color-brand-400: #818cf8;
+    --color-brand-500: #6366f1;
+    --color-brand-600: #5b50e8;
+    --color-brand-700: #4b40d4;
+    --color-brand-800: #3e35ab;
+    --color-brand-900: #312e81;
+    --color-brand-950: #1e1b4b;
+
+    /* Accent — cyan */
+    --color-accent-300: #67e8f9;
+    --color-accent-400: #22d3ee;
+    --color-accent-500: #06b6d4;
+    --color-accent-600: #0891b2;
+
+    /* Surfaces (neutral slate, slightly cooler) */
+    --color-ink-50: #f8fafc;
+    --color-ink-100: #f1f5f9;
+    --color-ink-200: #e2e8f0;
+    --color-ink-300: #cbd5e1;
+    --color-ink-400: #94a3b8;
+    --color-ink-500: #64748b;
+    --color-ink-600: #475569;
+    --color-ink-700: #334155;
+    --color-ink-800: #1e293b;
+    --color-ink-900: #0f172a;
+    --color-ink-950: #060a14;
+
+    --radius-card: 1.25rem;
+
+    --shadow-glow: 0 0 0 1px rgb(99 102 241 / 0.12), 0 18px 50px -12px rgb(79 70 229 / 0.35);
+    --shadow-soft: 0 1px 2px rgb(15 23 42 / 0.04), 0 12px 32px -12px rgb(15 23 42 / 0.18);
+    --shadow-card: 0 1px 0 0 rgb(255 255 255 / 0.06) inset, 0 20px 48px -24px rgb(2 6 23 / 0.55);
+
+    --animate-float: float 7s ease-in-out infinite;
+    --animate-float-slow: float 11s ease-in-out infinite;
+    --animate-gradient: gradient 8s ease infinite;
+    --animate-marquee: marquee 38s linear infinite;
+    --animate-shimmer: shimmer 2.2s linear infinite;
+
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0) translateX(0); }
+    50% { transform: translateY(-22px) translateX(10px); }
+}
+@keyframes gradient {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+@keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+@keyframes shimmer {
+    from { background-position: -200% 0; }
+    to { background-position: 200% 0; }
+}
+
+@layer base {
+    :root {
+        --bg: var(--color-ink-50);
+        --fg: var(--color-ink-900);
+        color-scheme: light;
+    }
+    .dark {
+        --bg: var(--color-ink-950);
+        --fg: var(--color-ink-100);
+        color-scheme: dark;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+        background-color: var(--bg);
+        color: var(--fg);
+        font-feature-settings: 'cv11', 'ss01';
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+    }
+
+    ::selection {
+        background-color: color-mix(in oklab, var(--color-brand-500) 28%, transparent);
+    }
+
+    /* Refined scrollbar */
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: var(--color-ink-300) transparent;
+    }
+    .dark * {
+        scrollbar-color: var(--color-ink-700) transparent;
+    }
+
+    [x-cloak] { display: none !important; }
+
+    :focus-visible {
+        outline: 2px solid var(--color-brand-500);
+        outline-offset: 2px;
+        border-radius: 4px;
+    }
+}
+
+@layer components {
+    /* Glassmorphism surfaces */
+    .glass {
+        background-color: color-mix(in oklab, white 72%, transparent);
+        backdrop-filter: blur(16px) saturate(150%);
+        border: 1px solid color-mix(in oklab, white 60%, transparent);
+    }
+    .dark .glass {
+        background-color: color-mix(in oklab, var(--color-ink-900) 60%, transparent);
+        border-color: color-mix(in oklab, white 8%, transparent);
+    }
+    .glass-strong {
+        background-color: color-mix(in oklab, white 86%, transparent);
+        backdrop-filter: blur(22px) saturate(160%);
+        border: 1px solid color-mix(in oklab, white 65%, transparent);
+    }
+    .dark .glass-strong {
+        background-color: color-mix(in oklab, var(--color-ink-900) 78%, transparent);
+        border-color: color-mix(in oklab, white 10%, transparent);
+    }
+
+    /* Brand gradient text */
+    .text-gradient {
+        background-image: linear-gradient(110deg, var(--color-brand-500), var(--color-accent-400) 55%, var(--color-brand-400));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    /* Animated brand gradient surface */
+    .bg-brand-gradient {
+        background-image: linear-gradient(120deg, var(--color-brand-600), #7c3aed 45%, var(--color-accent-500));
+        background-size: 200% 200%;
+    }
+
+    /* Subtle dotted grid backdrop */
+    .bg-grid {
+        background-image: radial-gradient(circle at 1px 1px, color-mix(in oklab, var(--color-ink-500) 22%, transparent) 1px, transparent 0);
+        background-size: 28px 28px;
+    }
+
+    /* Hairline ring used across cards */
+    .ring-hair {
+        box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-ink-900) 8%, transparent);
+    }
+    .dark .ring-hair {
+        box-shadow: 0 0 0 1px color-mix(in oklab, white 8%, transparent);
+    }
+}
+
+@layer utilities {
+    .text-balance { text-wrap: balance; }
+    .text-pretty { text-wrap: pretty; }
+
+    /* Scroll reveal — paired with the x-intersect directive in app.js */
+    .reveal {
+        opacity: 0;
+        transform: translateY(18px);
+        transition: opacity 0.7s var(--ease-out-expo), transform 0.7s var(--ease-out-expo);
+    }
+    .reveal.is-visible {
+        opacity: 1;
+        transform: none;
+    }
+
+    .mask-fade-r {
+        mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+    }
+}

@@ -17,4 +17,5 @@ return [
     'terms' => 'Terms of Service',
     'docs_short' => 'Docs',
     'cabinet' => 'Account',
+    'menu' => 'Menu',
 ];

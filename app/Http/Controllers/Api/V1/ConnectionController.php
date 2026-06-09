@@ -32,6 +32,8 @@ class ConnectionController extends Controller
                 'uuid' => $connection->uuid,
                 'name' => $connection->name,
                 'status' => $connection->status->value,
+                'config_link' => $connection->primaryLink(),
+                'subscription_url' => $connection->subscription_url,
                 'access_token' => $connection->access_token,
                 'region' => $connection->server?->region?->name,
                 'traffic' => [

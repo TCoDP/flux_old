@@ -16,17 +16,13 @@
                         <x-badge :color="$connection->status->color()" dot>{{ $connection->status->label() }}</x-badge>
                     </div>
 
-                    <div class="mt-5 space-y-3">
-                        <x-copy-field :label="__('dashboard.connections.access_data')" :value="$connection->server?->hostname ?? 'flux.net'" />
-                        <x-copy-field :label="__('docs.config_token') ?? 'Ключ'" :value="$connection->access_token" />
+                    <div class="mt-5">
+                        <x-copy-field :label="__('dashboard.connections.config_link')" :value="$connection->primaryLink()" />
                     </div>
 
                     <div class="mt-5 flex items-center justify-between">
                         <span class="text-xs text-ink-400">↑ {{ number_format($connection->bytes_up / 1048576, 0, '.', ' ') }} MB · ↓ {{ number_format($connection->bytes_down / 1048576, 0, '.', ' ') }} MB</span>
-                        <form method="POST" action="{{ route('dashboard.connections.regenerate', $connection) }}">
-                            @csrf
-                            <x-button type="submit" variant="ghost" size="sm" icon="arrow-path">{{ __('dashboard.connections.regenerate') }}</x-button>
-                        </form>
+                        <x-button :href="route('dashboard.connections.show', $connection)" variant="ghost" size="sm" icon="search">{{ __('dashboard.connections.details') }}</x-button>
                     </div>
                 </x-card>
             @endforeach

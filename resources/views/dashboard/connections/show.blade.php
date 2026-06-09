@@ -10,10 +10,15 @@
                     <h3 class="text-lg font-semibold text-ink-900 dark:text-white">{{ __('dashboard.connections.access_data') }}</h3>
                     <x-badge :color="$connection->status->color()" dot>{{ $connection->status->label() }}</x-badge>
                 </div>
-                <div class="mt-5 space-y-3">
-                    <x-copy-field label="Server" :value="$connection->server?->hostname ?? 'flux.net'" />
-                    <x-copy-field label="UUID" :value="$connection->uuid" />
-                    <x-copy-field label="Key" :value="$connection->access_token" />
+                <div class="mt-5 grid gap-5 sm:grid-cols-[auto_minmax(0,1fr)]">
+                    <div class="mx-auto h-44 w-44 shrink-0 rounded-xl bg-white p-2.5 ring-hair [&_svg]:h-full [&_svg]:w-full">{!! qr_svg($connection->primaryLink(), 180) !!}</div>
+                    <div class="min-w-0 space-y-3">
+                        <x-copy-field :label="__('dashboard.connections.config_link')" :value="$connection->primaryLink()" />
+                        @if ($connection->subscription_url)
+                            <x-copy-field :label="__('dashboard.connections.sub_url')" :value="$connection->subscription_url" :mono="false" />
+                        @endif
+                        <p class="text-xs text-ink-400">{{ __('dashboard.connections.import_hint') }}</p>
+                    </div>
                 </div>
                 <form method="POST" action="{{ route('dashboard.connections.regenerate', $connection) }}" class="mt-6">
                     @csrf

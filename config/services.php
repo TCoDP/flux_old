@@ -40,4 +40,16 @@ return [
         'secret' => env('BOT_API_SECRET'),
     ],
 
+    // 3X-UI panel (Xray / VLESS-Reality) for real connection provisioning.
+    // When disabled, the app provisions demo connections locally.
+    'xui' => [
+        'enabled' => env('XUI_ENABLED', false),
+        'base_url' => env('XUI_BASE_URL'),          // e.g. https://panel.example.com:2053/secretpath
+        'token' => env('XUI_API_TOKEN'),            // Settings → Security → API Token
+        'inbound_id' => env('XUI_INBOUND_ID'),      // inbound to attach new clients to
+        'sub_url_base' => env('XUI_SUB_URL_BASE'),  // e.g. https://sub.example.com:2096/sub
+        'verify_tls' => env('XUI_VERIFY_TLS', false),
+        'default_bytes' => env('XUI_DEFAULT_BYTES', 0), // traffic quota in bytes; 0 = unlimited
+    ],
+
 ];

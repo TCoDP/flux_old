@@ -6,8 +6,15 @@
         <div class="mx-auto flex max-w-md items-stretch justify-around px-1">
             @foreach ($items as $item)
                 @php $active = $item['active'] ?? false; @endphp
+
                 @if (! empty($item['action']))
                     <button type="button" @click="{{ $item['action'] }}"
+                            class="flex flex-1 flex-col items-center gap-1 py-2 text-ink-500 transition active:scale-95 dark:text-ink-400">
+                        <x-icon :name="$item['icon']" class="h-6 w-6" />
+                        <span class="text-[10px] font-medium leading-none">{{ $item['label'] }}</span>
+                    </button>
+                @elseif (! empty($item['onclick']))
+                    <button type="button" onclick="{!! $item['onclick'] !!}"
                             class="flex flex-1 flex-col items-center gap-1 py-2 text-ink-500 transition active:scale-95 dark:text-ink-400">
                         <x-icon :name="$item['icon']" class="h-6 w-6" />
                         <span class="text-[10px] font-medium leading-none">{{ $item['label'] }}</span>

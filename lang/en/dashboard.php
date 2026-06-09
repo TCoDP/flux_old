@@ -47,6 +47,7 @@ return [
         'title' => 'Connections', 'subtitle' => 'Secure connection profiles for your devices',
         'default_name' => 'Primary connection', 'regenerate' => 'Regenerate details', 'regenerated' => 'Connection details updated.',
         'region' => 'Region', 'last_handshake' => 'Last activity', 'traffic' => 'Traffic', 'access_data' => 'Connection details',
+        'config_link' => 'Connection link', 'sub_url' => 'Subscription', 'import_hint' => 'Scan the QR in your app or paste the link manually.', 'details' => 'Details',
         'empty' => 'No active connections', 'empty_text' => 'Connections are created automatically after you subscribe.',
     ],
     'devices' => [

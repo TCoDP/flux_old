@@ -67,10 +67,14 @@ export async function connectionDetailScreen(session, uuid) {
         t(lang, 'conn_region', { region: escapeHtml(c.region || '—') }),
         t(lang, 'conn_status', { status: t(lang, 'status_' + c.status) }),
         '',
-        t(lang, 'conn_key', { key: escapeHtml(c.access_token) }),
-        '',
-        t(lang, 'conn_copy_hint'),
+        t(lang, 'conn_link', { link: escapeHtml(c.config_link || c.access_token) }),
     ];
+
+    if (c.subscription_url) {
+        lines.push('', t(lang, 'conn_sub', { sub: escapeHtml(c.subscription_url) }));
+    }
+
+    lines.push('', t(lang, 'conn_copy_hint'));
 
     const kb = new InlineKeyboard().text(t(lang, 'btn_back'), 'nav:connections');
     return { text: lines.join('\n'), keyboard: kb };

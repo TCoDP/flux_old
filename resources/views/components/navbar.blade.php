@@ -10,6 +10,7 @@
 
 <header x-data="{ scrolled: false, mobile: false }"
         @scroll.window="scrolled = window.scrollY > 12"
+        @open-menu.window="mobile = true"
         class="sticky top-0 z-50 transition-all duration-300"
         :class="scrolled ? 'glass-strong shadow-soft' : 'bg-transparent'">
     <nav class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3.5 sm:px-8">
@@ -22,7 +23,7 @@
         </div>
 
         <div class="flex items-center gap-1.5">
-            <x-theme-toggle class="hidden sm:grid" />
+            <x-theme-toggle />
             <x-lang-switcher class="hidden sm:block" />
 
             @auth
@@ -33,10 +34,6 @@
                 <x-button :href="route('login')" variant="ghost" size="sm" class="hidden sm:inline-flex">{{ __('nav.login') }}</x-button>
                 <x-button :href="route('register')" variant="primary" size="sm" class="hidden sm:inline-flex">{{ __('nav.register') }}</x-button>
             @endauth
-
-            <button @click="mobile = true" class="grid h-9 w-9 place-items-center rounded-xl text-ink-600 hover:bg-ink-100 dark:text-ink-300 dark:hover:bg-white/5 lg:hidden">
-                <x-icon name="menu" class="h-5 w-5" />
-            </button>
         </div>
     </nav>
 

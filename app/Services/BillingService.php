@@ -99,9 +99,7 @@ class BillingService
 
             $payment->update(['subscription_id' => $subscription->id]);
 
-            if ($subscription->connections()->count() === 0) {
-                $this->provisioner->provision($subscription);
-            }
+            $this->provisioner->ensureForSubscription($subscription);
 
             $this->referrals->reward($payment);
 

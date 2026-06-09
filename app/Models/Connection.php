@@ -15,7 +15,8 @@ class Connection extends Model
 
     protected $fillable = [
         'user_id', 'subscription_id', 'server_id', 'device_id', 'name',
-        'uuid', 'access_token', 'status', 'last_handshake_at', 'bytes_up', 'bytes_down',
+        'uuid', 'access_token', 'remote_email', 'sub_id', 'subscription_url', 'config_link',
+        'status', 'last_handshake_at', 'bytes_up', 'bytes_down',
     ];
 
     protected function casts(): array
@@ -64,6 +65,24 @@ class Connection extends Model
     public function totalTraffic(): int
     {
         return $this->bytes_up + $this->bytes_down;
+    }
+
+    /** Whether this profile is backed by a real panel-issued config. */
+    public function hasRealConfig(): bool
+    {
+        return filled($this->config_link);
+    }
+
+    /** The import link to show the user (real panel link, or a demo placeholder). */
+    public function primaryLink(): string
+    {
+        if ($this->config_link) {
+            return $this->config_link;
+        }
+
+        $host = $this->server?->hostname ?: 'msk-01.flux.net';
+
+        return 'vless://'.$this->uuid.'@'.$host.':443?type=tcp&security=reality&fp=chrome#'.rawurlencode($this->name);
     }
 
     public function regenerate(): void

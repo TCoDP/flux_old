@@ -37,3 +37,18 @@ if (! function_exists('locale_url')) {
         return route('locale.switch', ['locale' => $locale]);
     }
 }
+
+if (! function_exists('qr_svg')) {
+    /**
+     * Render an inline SVG QR code for any string (connection links, etc.).
+     */
+    function qr_svg(string $data, int $size = 200): string
+    {
+        $renderer = new \BaconQrCode\Renderer\ImageRenderer(
+            new \BaconQrCode\Renderer\RendererStyle\RendererStyle($size, 1),
+            new \BaconQrCode\Renderer\Image\SvgImageBackEnd(),
+        );
+
+        return (new \BaconQrCode\Writer($renderer))->writeString($data);
+    }
+}

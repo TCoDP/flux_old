@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::post('auth/register', [AuthController::class, 'register'])->middleware('throttle:6,1')->name('auth.register');
     Route::post('auth/login', [AuthController::class, 'login'])->middleware('throttle:6,1')->name('auth.login');
+    Route::post('auth/telegram', [AuthController::class, 'telegram'])->middleware('throttle:20,1')->name('auth.telegram');
     Route::get('plans', [PlanController::class, 'index'])->name('plans');
     Route::get('meta', [\App\Http\Controllers\Api\V1\MetaController::class, 'index'])->name('meta');
 });

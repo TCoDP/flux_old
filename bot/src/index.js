@@ -4,7 +4,7 @@ import { config } from './config.js';
 import { FileAdapter } from './storage.js';
 import { t } from './i18n.js';
 import * as api from './api.js';
-import { cancelMenu } from './ui.js';
+import { cancelMenu, mainMenu } from './ui.js';
 import * as screens from './screens.js';
 
 // grammY on Node uses node-fetch, which proxies via an `agent` (not an undici
@@ -24,6 +24,7 @@ const initial = () => ({
     name: null,
     lang: config.defaultLang,
     step: null,
+    tmpName: null,
     tmpEmail: null,
 });
 
@@ -58,6 +59,34 @@ async function startLogin(ctx, edit) {
     await show(ctx, { text: t(ctx.session.lang, 'login_intro'), keyboard: cancelMenu(ctx.session.lang) }, { edit });
 }
 
+async function startRegister(ctx, edit) {
+    const lang = ctx.session.lang;
+
+    // One Telegram = one account. Block a second sign-up up front.
+    if (!ctx.session.token) {
+        try {
+            const existing = await api.telegramLogin(ctx.from.id);
+            if (existing) {
+                ctx.session.token = existing.token;
+                ctx.session.name = existing.user.name;
+            }
+        } catch { /* ignore — allow registration as a new user */ }
+    }
+
+    if (ctx.session.token) {
+        ctx.session.step = null;
+        return show(ctx, {
+            text: t(lang, 'reg_already_exists', { name: ctx.session.name || '' }),
+            keyboard: mainMenu(lang, true),
+        }, { edit });
+    }
+
+    ctx.session.step = 'reg_name';
+    ctx.session.tmpName = null;
+    ctx.session.tmpEmail = null;
+    await show(ctx, { text: t(lang, 'reg_intro'), keyboard: cancelMenu(lang) }, { edit });
+}
+
 async function doLogout(ctx) {
     if (ctx.session.token) await api.logout(ctx.session.token);
     ctx.session.token = null;
@@ -69,8 +98,20 @@ async function doLogout(ctx) {
 
 bot.command(['start', 'menu', 'help'], async (ctx) => {
     ctx.session.step = null;
+    // Auto-recognise a returning Telegram user (e.g. after the bot restarted).
+    if (!ctx.session.token) {
+        try {
+            const res = await api.telegramLogin(ctx.from.id);
+            if (res) {
+                ctx.session.token = res.token;
+                ctx.session.name = res.user.name;
+            }
+        } catch { /* ignore — fall back to guest menu */ }
+    }
     await showMain(ctx, false);
 });
+
+bot.command('register', (ctx) => startRegister(ctx, false));
 
 bot.command('login', (ctx) => startLogin(ctx, false));
 
@@ -104,6 +145,8 @@ bot.on('callback_query:data', async (ctx) => {
             ctx.session.lang = lang === 'ru' ? 'en' : 'ru';
             return showMain(ctx, true);
         }
+
+        if (data === 'act:register') return startRegister(ctx, true);
 
         if (data === 'act:login') return startLogin(ctx, true);
 
@@ -147,6 +190,77 @@ bot.on('message:text', async (ctx) => {
 
     const value = ctx.message.text.trim();
 
+    // ---- Registration flow ----
+    if (step === 'reg_name') {
+        if (value.length < 2) {
+            return ctx.reply(t(lang, 'reg_intro'), { parse_mode: 'HTML', reply_markup: cancelMenu(lang) });
+        }
+        ctx.session.tmpName = value.slice(0, 120);
+        ctx.session.step = 'reg_email';
+        return ctx.reply(t(lang, 'reg_ask_email'), { parse_mode: 'HTML', reply_markup: cancelMenu(lang) });
+    }
+
+    if (step === 'reg_email') {
+        if (!EMAIL_RE.test(value)) {
+            return ctx.reply(t(lang, 'bad_email'), { reply_markup: cancelMenu(lang) });
+        }
+        ctx.session.tmpEmail = value;
+        ctx.session.step = 'reg_password';
+        return ctx.reply(t(lang, 'reg_ask_password'), { parse_mode: 'HTML', reply_markup: cancelMenu(lang) });
+    }
+
+    if (step === 'reg_password') {
+        const password = value;
+        await ctx.deleteMessage().catch(() => {}); // scrub the password message
+        if (password.length < 8) {
+            return ctx.reply(t(lang, 'reg_password_short'), { reply_markup: cancelMenu(lang) });
+        }
+
+        const name = ctx.session.tmpName;
+        const email = ctx.session.tmpEmail;
+        ctx.session.step = null;
+        ctx.session.tmpName = null;
+        ctx.session.tmpEmail = null;
+
+        try {
+            const { token, user } = await api.register({
+                name,
+                email,
+                password,
+                telegramId: String(ctx.from.id),
+                locale: lang,
+            });
+            ctx.session.token = token;
+            ctx.session.name = user.name;
+            await ctx.reply(t(lang, 'reg_success', { name: user.name }), { parse_mode: 'HTML' });
+            return showMain(ctx, false);
+        } catch (error) {
+            const status = error.response?.status;
+            const errors = error.response?.data?.errors || {};
+            console.error('[register]', status, error.message);
+
+            // This Telegram already has an account → log them back in transparently.
+            if (status === 422 && errors.telegram_id) {
+                try {
+                    const res = await api.telegramLogin(ctx.from.id);
+                    if (res) {
+                        ctx.session.token = res.token;
+                        ctx.session.name = res.user.name;
+                        await ctx.reply(t(lang, 'login_ok', { name: res.user.name }), { parse_mode: 'HTML' });
+                        return showMain(ctx, false);
+                    }
+                } catch { /* fall through to message */ }
+                return ctx.reply(t(lang, 'reg_telegram_linked'), { parse_mode: 'HTML' });
+            }
+
+            if (status === 422 && errors.email) {
+                ctx.session.step = 'reg_email';
+                return ctx.reply(t(lang, 'reg_email_taken'), { parse_mode: 'HTML', reply_markup: cancelMenu(lang) });
+            }
+            return ctx.reply(t(lang, 'reg_failed'), { parse_mode: 'HTML' });
+        }
+    }
+
     if (step === 'email') {
         if (!EMAIL_RE.test(value)) {
             return ctx.reply(t(lang, 'bad_email'), { reply_markup: cancelMenu(lang) });
@@ -163,7 +277,7 @@ bot.on('message:text', async (ctx) => {
         ctx.session.tmpEmail = null;
 
         try {
-            const { token, user } = await api.login(email, value);
+            const { token, user } = await api.login(email, value, String(ctx.from.id));
             ctx.session.token = token;
             ctx.session.name = user.name;
             await ctx.reply(t(lang, 'login_ok', { name: user.name }), { parse_mode: 'HTML' });
@@ -189,6 +303,7 @@ bot.catch((err) => {
 async function bootstrap() {
     await bot.api.setMyCommands([
         { command: 'start', description: 'Главное меню / Main menu' },
+        { command: 'register', description: 'Создать аккаунт / Sign up' },
         { command: 'login', description: 'Войти / Log in' },
         { command: 'logout', description: 'Выйти / Log out' },
         { command: 'menu', description: 'Меню / Menu' },

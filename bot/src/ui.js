@@ -46,7 +46,8 @@ export function mainMenu(lang, loggedIn) {
             .text(t(lang, 'btn_support'), 'nav:support').text(t(lang, 'btn_lang'), 'act:lang').row()
             .text(t(lang, 'btn_logout'), 'act:logout');
     } else {
-        kb.text(t(lang, 'btn_login'), 'act:login').row()
+        kb.text(t(lang, 'btn_register'), 'act:register').row()
+            .text(t(lang, 'btn_login'), 'act:login').row()
             .text(t(lang, 'btn_plans'), 'nav:plans').text(t(lang, 'btn_docs'), 'nav:docs').row()
             .text(t(lang, 'btn_support'), 'nav:support').text(t(lang, 'btn_lang'), 'act:lang');
     }

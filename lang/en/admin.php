@@ -16,6 +16,13 @@ return [
         'content' => 'Content', 'articles' => 'Articles', 'reviews' => 'Reviews', 'notifications' => 'Notifications',
         'system' => 'System', 'settings' => 'Project settings', 'seo' => 'SEO settings',
     ],
+
+    'bnav' => [
+        'dashboard' => 'Dash',
+        'users' => 'Users',
+        'payments' => 'Pay',
+        'more' => 'Menu',
+    ],
     'dashboard' => [
         'title' => 'Dashboard', 'subtitle' => 'Key project metrics',
         'users' => 'Users', 'active_subs' => 'Active subscriptions', 'revenue' => 'Revenue', 'pending' => 'Pending payments',

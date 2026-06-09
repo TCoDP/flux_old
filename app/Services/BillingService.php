@@ -16,10 +16,53 @@ use Illuminate\Support\Facades\DB;
 
 class BillingService
 {
+    /** Default trial length (days) granted on registration. */
+    public const TRIAL_DAYS = 14;
+
     public function __construct(
         private readonly ReferralService $referrals,
         private readonly ConnectionProvisioner $provisioner,
     ) {}
+
+    /**
+     * Grant a new user a free trial on the popular plan and provision their
+     * first connection. No-op if they already have any subscription.
+     */
+    public function startTrial(User $user, int $days = self::TRIAL_DAYS): ?Subscription
+    {
+        if ($user->subscriptions()->exists()) {
+            return null;
+        }
+
+        $plan = Plan::active()->where('is_popular', true)->first() ?? Plan::active()->first();
+
+        if (! $plan) {
+            return null;
+        }
+
+        return DB::transaction(function () use ($user, $plan, $days) {
+            $subscription = $user->subscriptions()->create([
+                'plan_id' => $plan->id,
+                'status' => SubscriptionStatus::Trialing,
+                'starts_at' => now(),
+                'trial_ends_at' => now()->addDays($days),
+                'ends_at' => now()->addDays($days),
+                'auto_renew' => false,
+            ]);
+
+            $this->provisioner->provision($subscription);
+
+            Notification::create([
+                'user_id' => $user->id,
+                'type' => 'system',
+                'title' => __('notifications.trial_started_title', [], $user->locale),
+                'body' => __('notifications.trial_started_body', ['days' => $days], $user->locale),
+                'icon' => 'rocket',
+            ]);
+
+            return $subscription;
+        });
+    }
 
     /** Create a pending payment for a plan, applying an optional promo code. */
     public function checkout(User $user, Plan $plan, PaymentMethod $method, ?PromoCode $promo = null): Payment

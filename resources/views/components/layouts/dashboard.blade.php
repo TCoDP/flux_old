@@ -1,5 +1,15 @@
 @props(['seo' => [], 'title' => null])
 
+@php
+    $bottomNav = [
+        ['href' => route('dashboard.home'), 'icon' => 'chart', 'label' => __('dashboard.bnav.overview'), 'active' => request()->routeIs('dashboard.home')],
+        ['href' => route('dashboard.subscriptions.index'), 'icon' => 'sparkles', 'label' => __('dashboard.bnav.subscriptions'), 'active' => request()->routeIs('dashboard.subscriptions.*')],
+        ['href' => route('dashboard.connections.index'), 'icon' => 'wifi', 'label' => __('dashboard.bnav.connections'), 'active' => request()->routeIs('dashboard.connections.*')],
+        ['href' => route('dashboard.notifications.index'), 'icon' => 'bell', 'label' => __('dashboard.bnav.notifications'), 'active' => request()->routeIs('dashboard.notifications.*')],
+        ['action' => 'sidebar = true', 'icon' => 'menu', 'label' => __('dashboard.bnav.more')],
+    ];
+@endphp
+
 <x-layouts.base :seo="$seo">
     <div x-data="{ sidebar: false }" class="min-h-screen">
         {{-- Desktop sidebar --}}
@@ -40,9 +50,11 @@
                 </div>
             </header>
 
-            <main class="mx-auto max-w-6xl px-5 py-8 sm:px-8">
+            <main class="mx-auto max-w-6xl px-5 pt-8 pb-28 sm:px-8 lg:pb-10">
                 {{ $slot }}
             </main>
         </div>
+
+        <x-bottom-nav :items="$bottomNav" />
     </div>
 </x-layouts.base>

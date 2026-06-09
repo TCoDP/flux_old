@@ -6,7 +6,7 @@
     'container' => 'max-w-7xl',
 ])
 
-<section {{ $attributes->merge(['class' => 'relative py-20 sm:py-28']) }}>
+<section {{ $attributes->merge(['class' => 'relative py-16 sm:py-28']) }}>
     <div class="mx-auto {{ $container }} px-5 sm:px-8">
         @if ($eyebrow || $title || $subtitle)
             <div class="reveal {{ $center ? 'mx-auto max-w-2xl text-center' : 'max-w-2xl' }}">

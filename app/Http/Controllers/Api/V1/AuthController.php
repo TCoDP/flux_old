@@ -5,22 +5,24 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\ActivityLogger;
+use App\Services\BillingService;
 use App\Services\ReferralService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
 {
     /** Register a new account straight from the bot and return a read-only token. */
-    public function register(Request $request, ReferralService $referrals): JsonResponse
+    public function register(Request $request, ReferralService $referrals, BillingService $billing): JsonResponse
     {
         $data = $request->validate([
             'name' => ['required', 'string', 'max:120'],
             'email' => ['required', 'email', 'max:190', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8'],
             'referral_code' => ['nullable', 'string', 'max:32'],
-            'telegram_id' => ['nullable', 'string', 'max:32'],
+            'telegram_id' => ['nullable', 'string', 'max:32', Rule::unique('users', 'telegram_id')],
         ]);
 
         $user = User::create([
@@ -33,6 +35,7 @@ class AuthController extends Controller
         ]);
 
         $referrals->attach($user, $data['referral_code'] ?? null);
+        $billing->startTrial($user); // 2-week free trial on sign-up
         ActivityLogger::log('user.registered.telegram', user: $user);
 
         $token = $user->createToken('telegram-bot', ['read'])->plainTextToken;
@@ -70,6 +73,35 @@ class AuthController extends Controller
 
         $token = $user->createToken($data['device_name'] ?? 'telegram-bot', ['read'])->plainTextToken;
         ActivityLogger::log('api.token.telegram', user: $user);
+
+        return response()->json([
+            'token' => $token,
+            'user' => ['name' => $user->name, 'email' => $user->email],
+        ]);
+    }
+
+    /** Recognise a returning Telegram user via the trusted bot channel. */
+    public function telegram(Request $request): JsonResponse
+    {
+        $secret = (string) config('services.telegram_bot.secret');
+
+        if ($secret === '' || ! hash_equals($secret, (string) $request->header('X-Bot-Secret'))) {
+            return response()->json(['message' => 'forbidden'], 403);
+        }
+
+        $data = $request->validate(['telegram_id' => ['required', 'string', 'max:32']]);
+
+        $user = User::where('telegram_id', $data['telegram_id'])->first();
+
+        if (! $user) {
+            return response()->json(['message' => 'not_registered'], 404);
+        }
+
+        if ($user->isBanned()) {
+            return response()->json(['message' => __('auth.banned')], 403);
+        }
+
+        $token = $user->createToken('telegram-bot', ['read'])->plainTextToken;
 
         return response()->json([
             'token' => $token,

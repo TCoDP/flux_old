@@ -18,4 +18,5 @@ export const config = {
     siteUrl: stripSlash(process.env.SITE_URL || 'http://127.0.0.1:8123'),
     defaultLang: process.env.DEFAULT_LANG === 'en' ? 'en' : 'ru',
     sessionFile: process.env.SESSION_FILE || './data/sessions.json',
+    botApiSecret: process.env.BOT_API_SECRET || '',
 };

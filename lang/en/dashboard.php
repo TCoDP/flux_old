@@ -15,6 +15,14 @@ return [
         'security' => 'Security',
         'api' => 'API access',
     ],
+
+    'bnav' => [
+        'overview' => 'Home',
+        'subscriptions' => 'Plans',
+        'connections' => 'Access',
+        'notifications' => 'Alerts',
+        'more' => 'Menu',
+    ],
     'home' => [
         'greeting' => 'Hello, :name',
         'subtitle' => 'Here is an overview of your account',

@@ -9,6 +9,7 @@ const dict = {
         btn_docs: '📚 Документация',
         btn_support: '🆘 Поддержка',
         btn_login: '🔐 Войти',
+        btn_register: '🆕 Создать аккаунт',
         btn_logout: '🚪 Выйти',
         btn_lang: '🌐 EN',
         btn_back: '‹ Назад',
@@ -33,6 +34,17 @@ const dict = {
         login_ok: '✅ Готово, <b>:name</b>! Вы вошли в аккаунт.',
         login_fail: '❌ Неверный email или пароль. Попробуйте ещё раз: /login',
         logout_ok: '👋 Вы вышли из аккаунта.',
+
+        // Registration
+        reg_intro: '🆕 <b>Регистрация в Flux</b>\n\nДавайте создадим аккаунт. Как вас зовут?',
+        reg_ask_email: 'Отлично! Теперь введите ваш email:',
+        reg_ask_password: 'Придумайте пароль (минимум 8 символов).\n\n<i>Сообщение с паролем я сразу удалю.</i>',
+        reg_password_short: 'Пароль слишком короткий — нужно минимум 8 символов. Введите ещё раз:',
+        reg_email_taken: '✋ Этот email уже зарегистрирован. Введите другой email или войдите: /login',
+        reg_success: '🎉 Аккаунт создан, <b>:name</b>!\n\n✅ Активирован <b>бесплатный пробный период на 14 дней</b> — подключения уже готовы.\n\nДобро пожаловать в Flux!',
+        reg_failed: '❌ Не удалось завершить регистрацию. Попробуйте позже: /register',
+        reg_telegram_linked: 'У этого Telegram уже есть аккаунт Flux. Нажмите «🔐 Войти» или /login.',
+        reg_already_exists: '✋ <b>Регистрация недоступна</b>\n\nНа этот Telegram уже зарегистрирован аккаунт <b>:name</b>. Один Telegram — один аккаунт сервиса.\n\nВы вошли в свой аккаунт — выберите раздел:',
 
         // Account
         account_title: '👤 <b>Аккаунт</b>',
@@ -100,6 +112,7 @@ const dict = {
         btn_docs: '📚 Docs',
         btn_support: '🆘 Support',
         btn_login: '🔐 Log in',
+        btn_register: '🆕 Create account',
         btn_logout: '🚪 Log out',
         btn_lang: '🌐 RU',
         btn_back: '‹ Back',
@@ -122,6 +135,17 @@ const dict = {
         login_ok: '✅ Done, <b>:name</b>! You are logged in.',
         login_fail: '❌ Invalid email or password. Try again: /login',
         logout_ok: '👋 You have logged out.',
+
+        // Registration
+        reg_intro: '🆕 <b>Sign up for Flux</b>\n\nLet\'s create your account. What is your name?',
+        reg_ask_email: 'Great! Now enter your email:',
+        reg_ask_password: 'Create a password (at least 8 characters).\n\n<i>I will delete the password message right away.</i>',
+        reg_password_short: 'Password is too short — at least 8 characters are required. Try again:',
+        reg_email_taken: '✋ This email is already registered. Use another email or log in: /login',
+        reg_success: '🎉 Account created, <b>:name</b>!\n\n✅ Your <b>14-day free trial</b> is active — connections are ready.\n\nWelcome to Flux!',
+        reg_failed: '❌ Registration could not be completed. Please try again later: /register',
+        reg_telegram_linked: 'This Telegram already has a Flux account. Tap "🔐 Log in" or /login.',
+        reg_already_exists: '✋ <b>Registration unavailable</b>\n\nThis Telegram already has an account <b>:name</b>. One Telegram — one service account.\n\nYou are now logged in — pick a section:',
 
         account_title: '👤 <b>Account</b>',
         acc_email: '✉️ Email: <b>:email</b>',

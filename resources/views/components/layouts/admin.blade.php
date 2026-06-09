@@ -1,5 +1,14 @@
 @props(['seo' => [], 'title' => null])
 
+@php
+    $bottomNav = [
+        ['href' => route('admin.dashboard'), 'icon' => 'chart', 'label' => __('admin.bnav.dashboard'), 'active' => request()->routeIs('admin.dashboard')],
+        ['href' => route('admin.users.index'), 'icon' => 'users', 'label' => __('admin.bnav.users'), 'active' => request()->routeIs('admin.users.*')],
+        ['href' => route('admin.payments.index'), 'icon' => 'credit-card', 'label' => __('admin.bnav.payments'), 'active' => request()->routeIs('admin.payments.*')],
+        ['action' => 'sidebar = true', 'icon' => 'menu', 'label' => __('admin.bnav.more')],
+    ];
+@endphp
+
 <x-layouts.base :seo="$seo">
     <div x-data="{ sidebar: false }" class="min-h-screen">
         {{-- Desktop sidebar --}}
@@ -45,12 +54,14 @@
                 </div>
             </header>
 
-            <main class="mx-auto max-w-7xl px-5 py-8 sm:px-8">
+            <main class="mx-auto max-w-7xl px-5 pt-8 pb-28 sm:px-8 lg:pb-10">
                 @if (isset($header))
                     <div class="mb-6 flex flex-wrap items-center justify-between gap-3">{{ $header }}</div>
                 @endif
                 {{ $slot }}
             </main>
         </div>
+
+        <x-bottom-nav :items="$bottomNav" />
     </div>
 </x-layouts.base>

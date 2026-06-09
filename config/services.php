@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    // Shared secret for the Telegram bot ↔ API trusted channel.
+    'telegram_bot' => [
+        'secret' => env('BOT_API_SECRET'),
+    ],
+
 ];

@@ -15,4 +15,6 @@ return [
     'logout' => 'Log out',
     'privacy' => 'Privacy Policy',
     'terms' => 'Terms of Service',
+    'docs_short' => 'Docs',
+    'cabinet' => 'Account',
 ];

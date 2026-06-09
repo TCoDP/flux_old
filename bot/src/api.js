@@ -9,13 +9,52 @@ const http = axios.create({
 
 const auth = (token) => ({ headers: { Authorization: `Bearer ${token}` } });
 
-export async function login(email, password) {
+export async function register({ name, email, password, telegramId, referralCode, locale }) {
+    const { data } = await http.post('/auth/register', {
+        name,
+        email,
+        password,
+        telegram_id: telegramId,
+        referral_code: referralCode,
+        locale,
+    });
+    return data; // { token, user: { name, email } }
+}
+
+/** Recognise a returning Telegram user via the trusted bot channel. Returns null if not registered. */
+export async function telegramLogin(telegramId) {
+    if (!config.botApiSecret) return null;
+    try {
+        const { data } = await http.post(
+            '/auth/telegram',
+            { telegram_id: String(telegramId) },
+            { headers: { 'X-Bot-Secret': config.botApiSecret } },
+        );
+        return data; // { token, user }
+    } catch (error) {
+        if (error.response?.status === 404) return null; // no linked account yet
+        throw error;
+    }
+}
+
+export async function login(email, password, telegramId) {
     const { data } = await http.post('/auth/login', {
         email,
         password,
+        telegram_id: telegramId,
         device_name: 'telegram-bot',
     });
     return data; // { token, user: { name, email } }
+}
+
+/** Extract a human-friendly message from an API error (validation or message). */
+export function errorMessage(error) {
+    const res = error?.response?.data;
+    if (res?.errors) {
+        const first = Object.values(res.errors)[0];
+        if (Array.isArray(first) && first[0]) return first[0];
+    }
+    return res?.message || null;
 }
 
 export async function logout(token) {

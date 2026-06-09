@@ -16,6 +16,14 @@ return [
         'api' => 'API-доступ',
     ],
 
+    'bnav' => [
+        'overview' => 'Обзор',
+        'subscriptions' => 'Подписки',
+        'connections' => 'Сеть',
+        'notifications' => 'Уведомл.',
+        'more' => 'Меню',
+    ],
+
     'home' => [
         'greeting' => 'Здравствуйте, :name',
         'subtitle' => 'Вот сводка по вашему аккаунту',
